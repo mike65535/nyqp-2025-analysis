@@ -1,0 +1,19 @@
+# Large data files
+*.db
+*.png
+*.json
+
+# Source logs (too large for git)
+logs/
+
+# Deprecated files
+_*
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# OS files
+.DS_Store
+Thumbs.db

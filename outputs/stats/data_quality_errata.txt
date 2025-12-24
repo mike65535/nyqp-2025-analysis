@@ -1,0 +1,28 @@
+2025 New York QSO Party - Data Quality Errata
+===============================================
+
+This file documents data quality issues encountered during log processing.
+No individual callsigns are listed to avoid discouraging participation.
+
+MISSING CLAIMED SCORES
+---------------------
+Issue: 31 out of 508 submitted logs (6.1%) were missing claimed scores
+Cause: Either no CLAIMED-SCORE: line in Cabrillo header, or empty value
+Impact: These logs excluded from score-based statistical analysis (box plots)
+Note: Logs still counted in participation statistics and QSO totals
+
+Examples of missing score formats:
+- CLAIMED-SCORE: (empty value)
+- Missing CLAIMED-SCORE: line entirely
+
+RECOMMENDATION FOR FUTURE CONTESTS
+----------------------------------
+Contest software should validate Cabrillo headers before submission to ensure
+all required fields are populated, particularly CLAIMED-SCORE.
+
+STATISTICS AFFECTED
+------------------
+- Box Plot of Score by Category: Uses 477 logs with valid scores
+- All other charts and statistics: Use complete dataset of 508 logs
+
+Last Updated: 2025-12-24
