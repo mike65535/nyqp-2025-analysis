@@ -1,72 +1,90 @@
-# NYQP 2025 Contest Analysis
+# NYQP 2025 Analysis
 
-Analysis tools and visualizations for the 2025 New York QSO Party contest data.
+Analysis tools and visualizations for the New York QSO Party 2025 contest data.
+
+## Features
+
+- **Interactive Animated Map**: Real-time visualization of mobile station activity during the contest
+- **Statistical Charts**: Band activity, QSO distributions, and performance analysis
+- **Enhanced Static Map**: County-by-county activity overview
+- **Chart Gallery**: Comprehensive collection of contest statistics
+
+## Generated Outputs
+
+- `outputs/html/nyqp_animated_map.html` - Interactive animated map showing mobile station movement
+- `outputs/html/nyqp_enhanced_map.html` - Static enhanced map with county statistics  
+- `outputs/html/chart_gallery.html` - Gallery of all generated charts
+- `outputs/charts/` - Individual chart images and thumbnails
+
+## Key Scripts
+
+- `scripts/new_generate_animated_map.py` - Main animated map generator
+- `scripts/generate_enhanced_map.py` - Static enhanced map generator
+- `scripts/create_charts.py` - Statistical chart generator
+- `scripts/create_sql_db.py` - Database creation from contest logs
+- `scripts/setup_instructions.html` - Complete setup guide
+
+## Requirements
+
+- Python 3.x (built-in libraries only: sqlite3, json)
+- Contest log files in Cabrillo format
+- NY state geographic boundary data
+
+## Quick Start
+
+1. Create database from contest logs:
+   ```bash
+   python scripts/create_sql_db.py
+   ```
+
+2. Generate animated map:
+   ```bash
+   python scripts/new_generate_animated_map.py
+   ```
+
+3. Create charts and enhanced map:
+   ```bash
+   python scripts/create_charts.py
+   python scripts/generate_enhanced_map.py
+   ```
+
+## Data Sources
+
+- Contest logs: Cabrillo format files from NYQP 2025 participants
+- Geographic data: NY county boundaries and coordinates
+- QSO database: SQLite database generated from contest logs
+
+## Mobile Station Tracking
+
+The animated map tracks 15 mobile stations with 7,575 total QSOs, showing:
+- Real-time station movement between counties
+- QSO activity visualization with time progression
+- County coverage and activity statistics
+- Touch-friendly controls for mobile devices
 
 ## Project Structure
 
 ```
 ├── scripts/           # Python analysis scripts
 ├── outputs/           # Generated files
-│   ├── charts/        # PNG visualizations
-│   ├── html/          # Web pages and statistics
-│   ├── data/          # Databases and JSON files
-│   └── stats/         # Analysis reports and errata
-├── config/            # Configuration files
-└── logs/              # Source log files (not in git)
+│   ├── charts/        # PNG visualizations and thumbnails
+│   ├── html/          # Interactive maps and galleries
+│   ├── data/          # Databases and geographic data
+│   └── stats/         # Analysis reports
+├── charts/            # Chart HTML files
+└── logs/              # Contest log files (not in git)
 ```
-
-## Workflow
-
-### 1. Database Creation
-```bash
-cd scripts
-python3 create_sql_db.py
-```
-- Processes all Cabrillo log files from `../logs/`
-- Creates `contest_meta.db` (station metadata) and `contest_qsos.db` (QSO records)
-- Validates QSO format and rejects malformed lines
-- Includes all logs (contest + checklogs) for flexibility
-
-### 2. Generate Statistics
-```bash
-python3 generate_stats.py
-```
-- Creates summary statistics (participation, QSO counts, categories)
-- Outputs `contest_stats.json` and `contest_stats.html`
-- Excludes checklogs from competitive analysis
-
-### 3. Create Visualizations
-```bash
-python3 create_charts.py
-```
-- Generates three main charts:
-  - Box plot of QSO counts by category (25 categories)
-  - Distribution of QSOs by location and mode
-  - Histogram of QSO totals per station
-- Uses consistent TX-side QSO counting methodology
-
-## Key Features
-
-- **Clean Data**: Validates Cabrillo format and handles parsing errors gracefully
-- **Flexible Analysis**: Can include/exclude checklogs as needed
-- **Comprehensive Categories**: Operator type, power level, mode, station type
-- **Consistent Methodology**: All charts use same QSO counting approach
-- **Data Quality Tracking**: Documents parsing issues and edge cases
 
 ## Data Quality
 
-See `outputs/stats/data_quality_errata.txt` for known data issues and their impact on analysis.
+- **Logs Processed**: 515 total (508 contest + 7 checklogs)
+- **Valid QSOs**: 79,468 (after format validation)
+- **Mobile Stations**: 15 stations with 7,575 QSOs tracked
+- See `outputs/stats/data_quality_errata.txt` for detailed quality notes
 
 ## Dependencies
 
-- Python 3.x
-- pandas
-- matplotlib
-- sqlite3 (built-in)
+- Python 3.x standard library (sqlite3, json)
+- pandas, matplotlib (for chart generation)
 
-## Contest Details
-
-- **Event**: 2025 New York QSO Party
-- **Date**: October 18-19, 2025
-- **Logs Processed**: 515 total (508 contest + 7 checklogs)
-- **Valid QSOs**: 79,468 (after format validation)
+See `scripts/setup_instructions.html` for complete setup documentation.

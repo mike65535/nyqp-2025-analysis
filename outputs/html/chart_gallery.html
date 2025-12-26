@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 New York QSO Party - Analysis Charts</title>
+    <style>
+        .chart-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .chart-item {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .chart-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .chart-thumbnail {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+        
+        .chart-thumbnail:hover {
+            opacity: 0.8;
+        }
+        
+        .chart-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+            color: #333;
+        }
+        
+        .chart-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .chart-gallery {
+                grid-template-columns: 1fr;
+                padding: 10px;
+                gap: 15px;
+            }
+            
+            .chart-item {
+                padding: 10px;
+            }
+            
+            .chart-title {
+                font-size: 14px;
+            }
+            
+            .chart-description {
+                font-size: 12px;
+            }
+        }
+        
+
+    </style>
+</head>
+<body>
+    <div class="chart-gallery">
+        
+        <!-- Box Plot -->
+        <div class="chart-item">
+            <img src="https://nyqp.org/wordpress/wp-content/uploads/2025/12/thumb_NYQP_2025_BoxPlotOfScoreByCategory.png" alt="Box Plot of QSO Count by Category" class="chart-thumbnail" onclick="window.open('https://nyqp.org/wordpress/wp-content/uploads/2025/12/NYQP_2025_BoxPlotOfScoreByCategory.png', '_blank')">
+            <div class="chart-title">QSO Count by Category</div>
+            <div class="chart-description">Distribution of QSO counts across 25 different contest categories (operator type, power level, mode, station type)</div>
+        </div>
+        
+        <!-- Distribution -->
+        <div class="chart-item">
+            <img src="https://nyqp.org/wordpress/wp-content/uploads/2025/12/thumb_NYQP_2025_DistributionOfQSOsByLocationAndMode.png" alt="Distribution of QSOs by Location and Mode" class="chart-thumbnail" onclick="window.open('https://nyqp.org/wordpress/wp-content/uploads/2025/12/NYQP_2025_DistributionOfQSOsByLocationAndMode.png', '_blank')">
+            <div class="chart-title">QSOs by Location & Mode</div>
+            <div class="chart-description">Breakdown of QSO activity between NY and non-NY stations, split by CW and Phone modes</div>
+        </div>
+        
+        <!-- Histogram -->
+        <div class="chart-item">
+            <img src="https://nyqp.org/wordpress/wp-content/uploads/2025/12/thumb_NYQP_2025_HistogramOfQSO_Totals.png" alt="Histogram of QSO Totals" class="chart-thumbnail" onclick="window.open('https://nyqp.org/wordpress/wp-content/uploads/2025/12/NYQP_2025_HistogramOfQSO_Totals.png', '_blank')">
+            <div class="chart-title">QSO Totals Distribution</div>
+            <div class="chart-description">Histogram showing how many stations achieved different QSO count levels during the contest</div>
+        </div>
+        
+        <!-- 160m -->
+        <div class="chart-item">
+            <img src="https://nyqp.org/wordpress/wp-content/uploads/2025/12/thumb_NYQP_2025_160m_Activity.png" alt="160m Band Activity" class="chart-thumbnail" onclick="window.open('https://nyqp.org/wordpress/wp-content/uploads/2025/12/NYQP_2025_160m_Activity.png', '_blank')">
+            <div class="chart-title">160m Band Activity</div>
+            <div class="chart-description">QSO activity over time on 160 meters, showing CW and Phone usage patterns during the 12-hour contest</div>
+        </div>
+        
+        <!-- 80m -->
+        <div class="chart-item">
+            <img src="https://nyqp.org/wordpress/wp-content/uploads/2025/12/thumb_NYQP_2025_80m_Activity.png" alt="80m Band Activity" class="chart-thumbnail" onclick="window.open('https://nyqp.org/wordpress/wp-content/uploads/2025/12/NYQP_2025_80m_Activity.png', '_blank')">
+            <div class="chart-title">80m Band Activity</div>
+            <div class="chart-description">QSO activity over time on 80 meters, showing CW and Phone usage patterns during the 12-hour contest</div>
+        </div>
+        
+        <!-- 40m -->
+        <div class="chart-item">
+            <img src="https://nyqp.org/wordpress/wp-content/uploads/2025/12/thumb_NYQP_2025_40m_Activity.png" alt="40m Band Activity" class="chart-thumbnail" onclick="window.open('https://nyqp.org/wordpress/wp-content/uploads/2025/12/NYQP_2025_40m_Activity.png', '_blank')">
+            <div class="chart-title">40m Band Activity</div>
+            <div class="chart-description">QSO activity over time on 40 meters, showing CW and Phone usage patterns during the 12-hour contest</div>
+        </div>
+        
+        <!-- 20m -->
+        <div class="chart-item">
+            <img src="https://nyqp.org/wordpress/wp-content/uploads/2025/12/thumb_NYQP_2025_20m_Activity.png" alt="20m Band Activity" class="chart-thumbnail" onclick="window.open('https://nyqp.org/wordpress/wp-content/uploads/2025/12/NYQP_2025_20m_Activity.png', '_blank')">
+            <div class="chart-title">20m Band Activity</div>
+            <div class="chart-description">QSO activity over time on 20 meters, showing CW and Phone usage patterns during the 12-hour contest</div>
+        </div>
+        
+        <!-- 15m -->
+        <div class="chart-item">
+            <img src="https://nyqp.org/wordpress/wp-content/uploads/2025/12/thumb_NYQP_2025_15m_Activity.png" alt="15m Band Activity" class="chart-thumbnail" onclick="window.open('https://nyqp.org/wordpress/wp-content/uploads/2025/12/NYQP_2025_15m_Activity.png', '_blank')">
+            <div class="chart-title">15m Band Activity</div>
+            <div class="chart-description">QSO activity over time on 15 meters, showing CW and Phone usage patterns during the 12-hour contest</div>
+        </div>
+        
+        <!-- 10m -->
+        <div class="chart-item">
+            <img src="https://nyqp.org/wordpress/wp-content/uploads/2025/12/thumb_NYQP_2025_10m_Activity.png" alt="10m Band Activity" class="chart-thumbnail" onclick="window.open('https://nyqp.org/wordpress/wp-content/uploads/2025/12/NYQP_2025_10m_Activity.png', '_blank')">
+            <div class="chart-title">10m Band Activity</div>
+            <div class="chart-description">QSO activity over time on 10 meters, showing CW and Phone usage patterns during the 12-hour contest</div>
+        </div>
+        
+        <!-- All Bands CW -->
+        <div class="chart-item">
+            <img src="https://nyqp.org/wordpress/wp-content/uploads/2025/12/thumb_NYQP_2025_AllBands_CW_Activity.png" alt="All Bands CW Activity" class="chart-thumbnail" onclick="window.open('https://nyqp.org/wordpress/wp-content/uploads/2025/12/NYQP_2025_AllBands_CW_Activity.png', '_blank')">
+            <div class="chart-title">All Bands - CW Mode</div>
+            <div class="chart-description">Stacked view of CW activity across all HF bands (160m-10m) showing band usage patterns over time</div>
+        </div>
+        
+        <!-- All Bands PH -->
+        <div class="chart-item">
+            <img src="https://nyqp.org/wordpress/wp-content/uploads/2025/12/thumb_NYQP_2025_AllBands_PH_Activity.png" alt="All Bands Phone Activity" class="chart-thumbnail" onclick="window.open('https://nyqp.org/wordpress/wp-content/uploads/2025/12/NYQP_2025_AllBands_PH_Activity.png', '_blank')">
+            <div class="chart-title">All Bands - Phone Mode</div>
+            <div class="chart-description">Stacked view of Phone activity across all HF bands (160m-10m) showing band usage patterns over time</div>
+        </div>
+        
+    </div>
+
+</body>
+</html>

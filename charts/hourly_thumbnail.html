@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hourly Activity - Thumbnail</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { margin: 20px; font-family: Arial, sans-serif; }
+        .chart-container { width: 300px; height: 200px; }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <canvas id="hourlyChart"></canvas>
+    </div>
+    <script>
+        const ctx = document.getElementById('hourlyChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "00", "01"],
+                datasets: [
+                    {
+                        label: 'CW',
+                        data: [6259, 4469, 3902, 3775, 3664, 3682, 4012, 4214, 3813, 5157, 4047, 3526],
+                        backgroundColor: '#2196F3',
+                        borderColor: '#1976D2',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'SSB',
+                        data: [2563, 2850, 2218, 2754, 2566, 2399, 2369, 2673, 2319, 2229, 2407, 1538],
+                        backgroundColor: '#FFC107',
+                        borderColor: '#FF8F00',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'DIG',
+                        data: [1, 26, 16, 4, 0, 0, 2, 18, 25, 31, 20, 3],
+                        backgroundColor: '#F44336',
+                        borderColor: '#D32F2F',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'QSOs per Hour' },
+                    tooltip: { enabled: false }
+                },
+                scales: {
+                    x: { 
+                        stacked: true,
+                        ticks: { font: { size: 8 } }
+                    },
+                    y: { 
+                        stacked: true,
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

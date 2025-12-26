@@ -1,0 +1,35 @@
+# Ignore generated output files
+outputs/charts/*.png
+outputs/charts/thumbnails/
+outputs/html/*.html
+outputs/data/*.db
+
+# Ignore log files (too large for git)
+../logs/
+logs/
+
+# Ignore temporary and backup files
+*~
+*.bak
+*.tmp
+temp.*
+_1_*
+README_OLD.md
+
+# Ignore DELETE_ME folder
+../DELETE_ME/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Keep essential reference files
+!outputs/data/ny-counties-boundaries.json
+!outputs/data/contest_config.json
+!outputs/data/contest_stats.json
+!outputs/data/ny_counties.json

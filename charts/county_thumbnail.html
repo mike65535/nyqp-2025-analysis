@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>NY Counties - Thumbnail</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { margin: 20px; font-family: Arial, sans-serif; }
+        .chart-container { width: 300px; height: 200px; }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <canvas id="countyChart"></canvas>
+    </div>
+    <script>
+        const ctx = document.getElementById('countyChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["ERI", "MON", "ONO", "SUF", "NIA", "RIC", "ORA", "STE", "ULS", "DUT", "ALB", "SAR", "YAT", "OSW", "BRM", "ORL", "WAR", "FRA", "NAS", "WES"],
+                datasets: [{
+                    data: [3988, 3012, 2968, 2109, 2095, 1700, 1330, 1292, 1273, 1145, 1042, 1028, 948, 894, 856, 809, 764, 715, 706, 696],
+                    backgroundColor: '#4CAF50',
+                    borderColor: '#45a049',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Top 20 NY Counties' },
+                    tooltip: { enabled: false }
+                },
+                scales: {
+                    y: { beginAtZero: true },
+                    x: { 
+                        ticks: { 
+                            maxRotation: 90, 
+                            minRotation: 90,
+                            font: { size: 8 }
+                        }
+                    }
+                },
+                animation: {
+                    onComplete: function() {
+                        const chart = this;
+                        const ctx = chart.ctx;
+                        ctx.font = '8px Arial';
+                        ctx.fillStyle = '#000';
+                        ctx.textAlign = 'center';
+                        
+                        chart.data.datasets.forEach((dataset, i) => {
+                            const meta = chart.getDatasetMeta(i);
+                            meta.data.forEach((bar, index) => {
+                                const data = dataset.data[index];
+                                ctx.fillText(data, bar.x, bar.y - 5);
+                            });
+                        });
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

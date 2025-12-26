@@ -25,6 +25,12 @@ def create_charts():
     
     # Chart 3: Histogram of QSO Totals
     create_qso_histogram(qso_db, output_dir)
+    
+    # Chart 4: Band Activity Over Time (individual charts)
+    create_band_activity_chart(meta_db, qso_db, output_dir)
+    
+    # Chart 5: Stacked Band Activity by Mode
+    create_stacked_band_charts(meta_db, qso_db, output_dir)
 
 def create_score_boxplot(meta_db, qso_db, output_dir):
     """Create box plot of scores by category using claimed scores with QSO count fallback."""
@@ -204,6 +210,197 @@ def create_qso_histogram(qso_db, output_dir):
     plt.close()
     print("Created QSO histogram")
 
+def create_band_activity_chart(meta_db, qso_db, output_dir):
+    """Create stacked area chart of QSO activity by band and mode over time."""
+    
+    # Get QSO data with time and band info
+    qso_conn = sqlite3.connect(qso_db)
+    qsos = pd.read_sql_query("""
+        SELECT DISTINCT station_call, freq, mode, date, time
+        FROM qsos
+        ORDER BY date, time
+    """, qso_conn)
+    qso_conn.close()
+    
+    # Convert frequency to band
+    def freq_to_band(freq_str):
+        try:
+            freq = int(freq_str)
+            if 1800 <= freq <= 2000: return '160m'
+            elif 3500 <= freq <= 4000: return '80m'
+            elif 7000 <= freq <= 7300: return '40m'
+            elif 14000 <= freq <= 14350: return '20m'
+            elif 21000 <= freq <= 21450: return '15m'
+            elif 28000 <= freq <= 29700: return '10m'
+            else: return 'VHF+'
+        except:
+            return 'Unknown'
+    
+    qsos['band'] = qsos['freq'].apply(freq_to_band)
+    qsos['mode_clean'] = qsos['mode'].apply(lambda x: 'CW' if x == 'CW' else 'PH')
+    
+    # Create 15-minute intervals from date and time
+    qsos['time_minutes'] = qsos['time'].str[:2].astype(int) * 60 + qsos['time'].str[2:4].astype(int)
+    qsos['time_15min'] = (qsos['time_minutes'] // 15) * 15  # Round down to 15-minute intervals
+    qsos['hour_15min'] = qsos['time_15min'] // 60
+    qsos['min_15min'] = qsos['time_15min'] % 60
+    qsos['time_str'] = qsos['hour_15min'].astype(str).str.zfill(2) + ':' + qsos['min_15min'].astype(str).str.zfill(2) + ':00'
+    qsos['datetime_15min'] = qsos['date'] + ' ' + qsos['time_str']
+    qsos['dt'] = pd.to_datetime(qsos['datetime_15min'], format='%Y-%m-%d %H:%M:%S')
+    
+    # Count QSOs per 15-minute interval by band and mode
+    interval_counts = qsos.groupby(['dt', 'band', 'mode_clean']).size().reset_index(name='count')
+    
+    # Create separate charts for each band
+    bands = ['160m', '80m', '40m', '20m', '15m', '10m', 'VHF+']
+    
+    for band in bands:
+        band_data = interval_counts[interval_counts['band'] == band]
+        
+        if len(band_data) > 0:
+            plt.figure(figsize=(12, 6))
+            
+            # Pivot to get CW and PH as separate columns
+            pivot_data = band_data.pivot_table(index='dt', columns='mode_clean', values='count', fill_value=0)
+            
+            # Create smooth stacked area chart
+            if 'CW' in pivot_data.columns and 'PH' in pivot_data.columns:
+                plt.fill_between(pivot_data.index, 0, pivot_data['CW'], alpha=0.7, color='#1f77b4', label='CW')
+                plt.fill_between(pivot_data.index, pivot_data['CW'], pivot_data['CW'] + pivot_data['PH'], 
+                               alpha=0.7, color='#ff7f0e', label='PH')
+            elif 'CW' in pivot_data.columns:
+                plt.fill_between(pivot_data.index, 0, pivot_data['CW'], alpha=0.7, color='#1f77b4', label='CW')
+            elif 'PH' in pivot_data.columns:
+                plt.fill_between(pivot_data.index, 0, pivot_data['PH'], alpha=0.7, color='#ff7f0e', label='PH')
+            
+            plt.title(f'{band} Band Activity Over Time', fontsize=16)
+            plt.xlabel('Time (UTC)', fontsize=12)
+            plt.ylabel('QSOs', fontsize=12)
+            plt.grid(True, alpha=0.3)
+            plt.legend()
+            
+            # Set x-axis limits to contest period (14:00 to 02:00 = 12 hours)
+            contest_start = pivot_data.index.min().replace(hour=14, minute=0, second=0)
+            contest_end = contest_start + pd.Timedelta(hours=12)  # Exactly 12 hours later (02:00 next day)
+            plt.xlim(contest_start, contest_end)
+            
+            # Format x-axis to show only HH:MM times
+            import matplotlib.dates as mdates
+            plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+            plt.gca().xaxis.set_major_locator(mdates.HourLocator(interval=2))  # Show every 2 hours
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+            
+            # Save individual band chart
+            safe_band = band.replace('+', 'Plus')
+            plt.savefig(output_dir / f'NYQP_2025_{safe_band}_Activity.png', dpi=150, bbox_inches='tight')
+            plt.close()
+            
+            print(f"Created {band} activity chart")
+        else:
+            print(f"No data for {band}")
+    
+    print("Created all band activity charts")
+
+def create_stacked_band_charts(meta_db, qso_db, output_dir):
+    """Create stacked area charts showing all bands by mode (CW and PH)."""
+    
+    # Get QSO data with time and band info
+    qso_conn = sqlite3.connect(qso_db)
+    qsos = pd.read_sql_query("""
+        SELECT DISTINCT station_call, freq, mode, date, time
+        FROM qsos
+        ORDER BY date, time
+    """, qso_conn)
+    qso_conn.close()
+    
+    # Convert frequency to band
+    def freq_to_band(freq_str):
+        try:
+            freq = int(freq_str)
+            if 1800 <= freq <= 2000: return '160m'
+            elif 3500 <= freq <= 4000: return '80m'
+            elif 7000 <= freq <= 7300: return '40m'
+            elif 14000 <= freq <= 14350: return '20m'
+            elif 21000 <= freq <= 21450: return '15m'
+            elif 28000 <= freq <= 29700: return '10m'
+            else: return 'VHF+'
+        except:
+            return 'Unknown'
+    
+    qsos['band'] = qsos['freq'].apply(freq_to_band)
+    qsos['mode_clean'] = qsos['mode'].apply(lambda x: 'CW' if x == 'CW' else 'PH')
+    
+    # Create 15-minute intervals from date and time
+    qsos['time_minutes'] = qsos['time'].str[:2].astype(int) * 60 + qsos['time'].str[2:4].astype(int)
+    qsos['time_15min'] = (qsos['time_minutes'] // 15) * 15
+    qsos['hour_15min'] = qsos['time_15min'] // 60
+    qsos['min_15min'] = qsos['time_15min'] % 60
+    qsos['time_str'] = qsos['hour_15min'].astype(str).str.zfill(2) + ':' + qsos['min_15min'].astype(str).str.zfill(2) + ':00'
+    qsos['datetime_15min'] = qsos['date'] + ' ' + qsos['time_str']
+    qsos['dt'] = pd.to_datetime(qsos['datetime_15min'], format='%Y-%m-%d %H:%M:%S')
+    
+    # Filter out VHF+
+    qsos = qsos[qsos['band'] != 'VHF+']
+    
+    # Count QSOs per 15-minute interval by band and mode
+    interval_counts = qsos.groupby(['dt', 'band', 'mode_clean']).size().reset_index(name='count')
+    
+    # Band order (160m on bottom, 10m on top) and colors
+    bands = ['160m', '80m', '40m', '20m', '15m', '10m']
+    colors = ['#8B4513', '#FF6347', '#32CD32', '#1E90FF', '#FFD700', '#FF69B4']  # Brown, Tomato, Lime, Blue, Gold, Pink
+    
+    # Create charts for each mode
+    modes = ['CW', 'PH']
+    
+    for mode in modes:
+        mode_data = interval_counts[interval_counts['mode_clean'] == mode]
+        
+        if len(mode_data) > 0:
+            plt.figure(figsize=(12, 8))
+            
+            # Pivot to get bands as columns
+            pivot_data = mode_data.pivot_table(index='dt', columns='band', values='count', fill_value=0)
+            
+            # Ensure all bands are present
+            for band in bands:
+                if band not in pivot_data.columns:
+                    pivot_data[band] = 0
+            
+            # Reorder columns to match band order
+            pivot_data = pivot_data[bands]
+            
+            # Create stacked area chart
+            plt.stackplot(pivot_data.index, *[pivot_data[band] for band in bands], 
+                         labels=bands, colors=colors, alpha=0.8)
+            
+            plt.title(f'All Bands Activity Over Time - {mode} Mode', fontsize=16)
+            plt.xlabel('Time (UTC)', fontsize=12)
+            plt.ylabel('QSOs', fontsize=12)
+            plt.legend(loc='upper right', bbox_to_anchor=(1.15, 1))
+            plt.grid(True, alpha=0.3)
+            
+            # Set x-axis limits to contest period (14:00 to 02:00 = 12 hours)
+            contest_start = pivot_data.index.min().replace(hour=14, minute=0, second=0)
+            contest_end = contest_start + pd.Timedelta(hours=12)
+            plt.xlim(contest_start, contest_end)
+            
+            # Format x-axis to show only HH:MM times
+            import matplotlib.dates as mdates
+            plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+            plt.gca().xaxis.set_major_locator(mdates.HourLocator(interval=2))
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+            
+            # Save chart
+            plt.savefig(output_dir / f'NYQP_2025_AllBands_{mode}_Activity.png', dpi=150, bbox_inches='tight')
+            plt.close()
+            
+            print(f"Created stacked {mode} band activity chart")
+        else:
+            print(f"No data for {mode} mode")
+    
+    print("Created stacked band activity charts")
+
 if __name__ == '__main__':
     create_charts()
-    print("All charts created successfully!")

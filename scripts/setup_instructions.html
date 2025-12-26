@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>NYQP 2025 Animated Map Setup Instructions</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+        h1, h2 { color: #2c3e50; }
+        .step { background: #f8f9fa; padding: 15px; margin: 10px 0; border-left: 4px solid #3498db; }
+        .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin: 10px 0; }
+        .code { background: #f4f4f4; padding: 10px; font-family: monospace; border-radius: 4px; }
+        .file-tree { background: #f8f9fa; padding: 15px; font-family: monospace; border: 1px solid #dee2e6; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        ul li { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>NYQP 2025 Animated Map Setup Instructions</h1>
+    
+    <div class="warning">
+        <strong>Note:</strong> This setup creates an interactive animated map showing mobile station activity during the NYQP 2025 contest.
+    </div>
+
+    <h2>Prerequisites</h2>
+    <ul>
+        <li><strong>Python 3.x</strong> - Built-in libraries only (sqlite3, json)</li>
+        <li><strong>Contest log files</strong> - Cabrillo format (.log files)</li>
+        <li><strong>Geographic data</strong> - NY state boundaries and county coordinates</li>
+    </ul>
+
+    <h2>Required Directory Structure</h2>
+    <div class="file-tree">
+NYQP-2025/
+├── logs/                           # Contest log files
+│   ├── ab1bl.log
+│   ├── k2a.log
+│   ├── k2g.log
+│   └── ... (other mobile logs)
+├── analysis/
+│   ├── scripts/
+│   │   ├── new_generate_animated_map.py
+│   │   └── create_database.py      # (to be created)
+│   └── data/
+│       ├── ny_boundaries.geojson   # (to be obtained)
+│       └── ny_counties.json        # (to be created)
+└── nyqp_2025.db                   # SQLite database (generated)
+    </div>
+
+    <h2>Step-by-Step Setup</h2>
+
+    <div class="step">
+        <h3>Step 1: Obtain Contest Log Files</h3>
+        <p>Collect Cabrillo format log files from mobile stations that participated in NYQP 2025. The current script expects these mobile stations:</p>
+        <ul>
+            <li>AB1BL, K2A, K2G, K2Q-R, K2V, KQ2R, KV2X-M</li>
+            <li>N1GBE, N2B, N2CU, N2T, W1WV-M, WI2M, WT2X</li>
+        </ul>
+        <p>Place all .log files in the <code>logs/</code> directory.</p>
+    </div>
+
+    <div class="step">
+        <h3>Step 2: Get NY State Geographic Data</h3>
+        <p><strong>NY State Boundaries (GeoJSON):</strong></p>
+        <ul>
+            <li><a href="https://github.com/holtzy/The-Python-Graph-Gallery/blob/master/static/data/US-counties.geojson" target="_blank">US Counties GeoJSON</a> (filter for NY)</li>
+            <li><a href="https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json" target="_blank">US Counties with FIPS codes</a></li>
+            <li><a href="https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html" target="_blank">US Census Cartographic Boundary Files</a></li>
+        </ul>
+        <p>Save as <code>analysis/data/ny_boundaries.geojson</code></p>
+    </div>
+
+    <div class="step">
+        <h3>Step 3: Create County Coordinates File</h3>
+        <p>Create <code>analysis/data/ny_counties.json</code> with county center coordinates:</p>
+        <div class="code">
+{
+  "ALB": {"lat": 42.6803, "lng": -73.8370, "name": "Albany"},
+  "ALL": {"lat": 42.0931, "lng": -78.2003, "name": "Allegany"},
+  "BRX": {"lat": 40.8448, "lng": -73.8648, "name": "Bronx"},
+  ...
+}
+        </div>
+        <p><strong>Resources for county coordinates:</strong></p>
+        <ul>
+            <li><a href="https://www.latlong.net/category/counties-236-14.html" target="_blank">LatLong.net County Coordinates</a></li>
+            <li><a href="https://simplemaps.com/data/us-counties" target="_blank">SimpleMaps US Counties Database</a></li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h3>Step 4: Create Database Creation Script</h3>
+        <p>Create <code>analysis/scripts/create_database.py</code> to parse log files and create the SQLite database:</p>
+        <div class="code">
+#!/usr/bin/env python3
+import sqlite3
+import os
+import re
+from datetime import datetime
+
+def parse_cabrillo_logs():
+    # Parse .log files and extract QSO data
+    # Create tables: qsos (call, datetime, worked_county, log_file)
+    # Insert QSO records with timestamps and county information
+    pass
+
+if __name__ == "__main__":
+    parse_cabrillo_logs()
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>Step 5: Modify the Animation Script</h3>
+        <p>Update <code>new_generate_animated_map.py</code> to use direct file sources instead of the reference HTML:</p>
+        <ul>
+            <li>Load boundaries from <code>ny_boundaries.geojson</code></li>
+            <li>Load county coordinates from <code>ny_counties.json</code></li>
+            <li>Generate mobile tracks directly from database QSO data</li>
+            <li>Remove dependency on reference HTML file</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h3>Step 6: Run the Setup</h3>
+        <div class="code">
+# 1. Create the database from log files
+cd NYQP-2025/analysis/scripts
+python create_database.py
+
+# 2. Generate the animated map
+python new_generate_animated_map.py
+        </div>
+        <p>Output: <code>nyqp_2025_mobile_activity.html</code></p>
+    </div>
+
+    <h2>Current Dependencies to Remove</h2>
+    <div class="warning">
+        <p><strong>Current Issue:</strong> The script currently depends on:</p>
+        <ul>
+            <li><code>/home/mgilmer/nyqp_2025.db</code> - SQLite database</li>
+            <li><code>_nyqp_2025_animated.html</code> - Reference HTML file for geographic data</li>
+        </ul>
+        <p>These need to be replaced with the standalone files described above.</p>
+    </div>
+
+    <h2>Alternative: Quick Setup with Existing Data</h2>
+    <div class="step">
+        <p>If you have the current working setup, you can extract the required data:</p>
+        <div class="code">
+# Extract boundaries from existing HTML
+grep -A 1000 "const boundaries = " _nyqp_2025_animated.html | head -n 1000 > ny_boundaries.js
+
+# Extract county coordinates  
+grep -A 100 "const countyCoords = " _nyqp_2025_animated.html | head -n 100 > ny_counties.js
+        </div>
+        <p>Then convert these JavaScript objects to JSON format.</p>
+    </div>
+
+    <h2>Resources</h2>
+    <ul>
+        <li><a href="https://leafletjs.com/" target="_blank">Leaflet.js Documentation</a> - Mapping library used</li>
+        <li><a href="https://geojson.org/" target="_blank">GeoJSON Specification</a> - Geographic data format</li>
+        <li><a href="https://www.contestcalendar.com/cabrillo.html" target="_blank">Cabrillo Log Format</a> - Contest log file format</li>
+        <li><a href="https://sqlite.org/docs.html" target="_blank">SQLite Documentation</a> - Database format</li>
+    </ul>
+
+    <p><em>Generated: December 25, 2025</em></p>
+</body>
+</html>
