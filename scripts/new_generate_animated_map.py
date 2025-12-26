@@ -902,7 +902,7 @@ def generate_animated_map():
         mobile_config_json, mobile_tracks_json, county_coords_json
     )
     
-    output_path = '/home/mgilmer/Downloads/QSO_PARTIES/NYQP-2025/analysis/outputs/html/nyqp_animated_map.html'
+    output_path = '/home/mgilmer/Downloads/QSO_PARTIES/NYQP-2025/analysis/outputs/html/nyqp_2025_mobile_animation.html'
     with open(output_path, 'w') as f:
         f.write(html_content)
     
