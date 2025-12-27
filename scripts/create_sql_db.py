@@ -17,6 +17,10 @@ class NYQPDatabaseCreator:
     def create_meta_db(self):
         """Create database for station metadata and categories."""
         db_path = self.output_dir / 'contest_meta.db'
+        # Remove existing database
+        if db_path.exists():
+            db_path.unlink()
+            
         conn = sqlite3.connect(db_path)
         
         conn.execute('''
@@ -40,8 +44,9 @@ class NYQPDatabaseCreator:
         ''')
         
         for log_file in self.logs_dir.glob('*.log'):
-            callsign = log_file.stem.upper()
             metadata = self.parse_metadata(log_file)
+            # Use CALLSIGN from header if available, otherwise fall back to filename
+            callsign = metadata.get('callsign', log_file.stem.upper())
             
             conn.execute('''
                 INSERT OR REPLACE INTO stations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -70,6 +75,10 @@ class NYQPDatabaseCreator:
     def create_qso_db(self):
         """Create database for QSO data."""
         db_path = self.output_dir / 'contest_qsos.db'
+        # Remove existing database
+        if db_path.exists():
+            db_path.unlink()
+            
         conn = sqlite3.connect(db_path)
         
         conn.execute('''
@@ -92,7 +101,9 @@ class NYQPDatabaseCreator:
         ''')
         
         for log_file in self.logs_dir.glob('*.log'):
-            station_call = log_file.stem.upper()
+            metadata = self.parse_metadata(log_file)
+            # Use CALLSIGN from header if available, otherwise fall back to filename
+            station_call = metadata.get('callsign', log_file.stem.upper())
             
             with open(log_file, 'r', encoding='utf-8', errors='ignore') as f:
                 for line in f:
@@ -100,7 +111,7 @@ class NYQPDatabaseCreator:
                         qso = self.parse_qso_line(line)
                         if qso:
                             # Create datetime for sorting/filtering
-                            dt_str = f"{qso['date'][:4]}-{qso['date'][4:6]}-{qso['date'][6:8]} {qso['time'][:2]}:{qso['time'][2:4]}:{qso['time'][4:6]}"
+                            dt_str = f"{qso['date']} {qso['time'][:2]}:{qso['time'][2:4]}:00"
                             
                             conn.execute('''
                                 INSERT INTO qsos VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -168,6 +179,8 @@ class NYQPDatabaseCreator:
                         metadata['club'] = value
                     elif key == 'created-by':
                         metadata['created_by'] = value
+                    elif key == 'callsign':
+                        metadata['callsign'] = value
                         
         return metadata
         
@@ -182,7 +195,7 @@ class NYQPDatabaseCreator:
             'mode': parts[2],
             'date': parts[3],
             'time': parts[4],
-            'tx_call': parts[5],
+            'tx_call': parts[5].rstrip('/M').rstrip('-M'),  # Remove /M and -M suffixes
             'tx_rst': parts[6],
             'tx_county': parts[7],
             'rx_call': parts[8],
